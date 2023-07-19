@@ -5,6 +5,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import com.dbstorageapp.model.DataTape;
 
 public class HelperClass {
 	// Convert string to Timestamp
@@ -41,5 +44,14 @@ public class HelperClass {
 			return number;
 		}
 		return number;
+	}
+	
+	public static void getDeletedTapes(List<DataTape> dataTapesToBeDeleted) {
+		if (dataTapesToBeDeleted.isEmpty()) {
+			System.out.println("No dataTapes are deleted!");
+		}
+		for (DataTape dtape : dataTapesToBeDeleted) {
+			System.out.println("Deleted: "+dtape.getName());
+		}
 	}
 }
