@@ -119,24 +119,16 @@ public class DataTapeService {
 				String[] fields = line.split(",");
 				String dataTapeName = fields[10];
 				dataTapeNames.add(fields[10]);
+
 				try {
 					DataTape currentDTape = dataTapeRepository.findDataTapeByName(dataTapeName);
-					if (currentDTape != null) {						
-						currentDTape.setAccess_cnt(HelperClass.toInteger(fields[0]));
-						currentDTape.setAccessed_at(HelperClass.toTimestamp(fields[1]));
-						currentDTape.setBytes(HelperClass.toLong(fields[2]));
-						currentDTape.setCampaign(fields[3]);
-						currentDTape.setClosed_at(HelperClass.toTimestamp(fields[4]));
-						currentDTape.setCreated_at(HelperClass.toTimestamp(fields[5]));
-						currentDTape.setDeleted_at(HelperClass.toTimestamp(fields[6]));
-						currentDTape.setEol_at(HelperClass.toTimestamp(fields[7]));
-						currentDTape.setExpired_at(HelperClass.toTimestamp(fields[8]));
-						currentDTape.setLength(HelperClass.toInteger(fields[9]));
-						currentDTape.setName(dataTapeName);
-						currentDTape.setRun_number(HelperClass.toInteger(fields[11]));
-						currentDTape.setUpdated_at(HelperClass.toTimestamp(fields[12]));
-						System.out.println("Updating: " + dataTapeName);
-						dataTapeRepository.save(currentDTape);
+
+					if (currentDTape != null) {
+						if (currentDTape.updateOnlyOnChanges(fields) == true) {
+							System.out.println("Updating: " + dataTapeName);
+							dataTapeRepository.save(currentDTape);
+						}
+
 					} else {
 						System.out.println("Creating: " + dataTapeName);
 						dataTapeRepository.save(new DataTape(HelperClass.toInteger(fields[0]),
@@ -146,7 +138,6 @@ public class DataTapeService {
 								HelperClass.toTimestamp(fields[8]), HelperClass.toInteger(fields[9]), fields[10],
 								HelperClass.toInteger(fields[11]), HelperClass.toTimestamp(fields[12])));
 					}
-
 				} catch (DataAccessException e) {
 					System.out.println(e.getMessage());
 				}
@@ -155,11 +146,9 @@ public class DataTapeService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// delete entries		
+		// delete (csv_file) non existing records from db
 		List<DataTape> deleteDataTapes = dataTapeRepository.findDataTapeByNameNotIn(dataTapeNames);
 		dataTapeRepository.deleteAll(deleteDataTapes);
-		
 		HelperClass.getDeletedTapes(deleteDataTapes);
-
 	}
 }

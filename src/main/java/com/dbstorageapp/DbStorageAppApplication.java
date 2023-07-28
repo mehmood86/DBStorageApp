@@ -13,13 +13,13 @@ public class DbStorageAppApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(DbStorageAppApplication.class, args);
 	}
-	
+
 	@Autowired
 	private DataTapeService dService;
 
 	public void run(String... args) throws Exception {
-		
-		//dService.saveRecordFromInputFile();
+
+		// dService.saveRecordFromInputFile();
 		dService.saveRecordFromCSV();
 	}
 

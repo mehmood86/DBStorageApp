@@ -25,7 +25,7 @@ public class HelperClass {
 	public static Integer toInteger(String input) {
 		int number = 0;
 		try {
-			if (input != null) {
+			if (input != null || input != "None") {
 				number = Integer.parseInt(input);
 			}
 
@@ -39,19 +39,19 @@ public class HelperClass {
 	public static Long toLong(String input) {
 		long number = 0;
 		try {
-			number = Long.parseLong(input);			 
+			number = Long.parseLong(input);
 		} catch (NumberFormatException e) {
 			return number;
 		}
 		return number;
 	}
-	
+
 	public static void getDeletedTapes(List<DataTape> dataTapesToBeDeleted) {
-		if (dataTapesToBeDeleted.isEmpty()) {
-			System.out.println("No dataTapes are deleted!");
-		}
-		for (DataTape dtape : dataTapesToBeDeleted) {
-			System.out.println("Deleted: "+dtape.getName());
+		if (!dataTapesToBeDeleted.isEmpty()) {
+			for (DataTape dtape : dataTapesToBeDeleted) {
+				System.out.println("Deleted: " + dtape.getName());
+			}
 		}
 	}
+
 }

@@ -2,6 +2,8 @@ package com.dbstorageapp.model;
 
 import java.sql.Timestamp;
 
+import com.dbstorageapp.helperMethods.HelperClass;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -160,6 +162,73 @@ public class DataTape {
 
 	public void setUpdated_at(Timestamp updated_at) {
 		this.updated_at = updated_at;
+	}
+
+	public boolean updateOnlyOnChanges(String[] allFields) {
+
+		boolean isChanged = false;
+
+		if (this.getAccess_cnt() != HelperClass.toInteger(allFields[0])) {
+			this.setAccess_cnt(HelperClass.toInteger(allFields[0]));
+			isChanged = true;
+		}
+
+		if (this.getAccessed_at() != null && !this.getAccessed_at().equals(HelperClass.toTimestamp(allFields[1]))) {
+			this.setAccessed_at(HelperClass.toTimestamp(allFields[1]));
+			isChanged = true;
+		}
+
+		if (this.getBytes() != HelperClass.toLong(allFields[2])) {
+			this.setBytes(HelperClass.toLong(allFields[2]));
+			isChanged = true;
+		}
+
+		if (!this.getCampaign().equals(allFields[3])) {
+			this.setCampaign(allFields[3]);
+			isChanged = true;
+		}
+
+		if (this.getClosed_at() != null && !this.getClosed_at().equals(HelperClass.toTimestamp(allFields[4]))) {
+			this.setClosed_at(HelperClass.toTimestamp(allFields[4]));
+			isChanged = true;
+		}
+
+		if (this.getCreated_at() != null && !this.getCreated_at().equals(HelperClass.toTimestamp(allFields[5]))) {
+			this.setCreated_at(HelperClass.toTimestamp(allFields[5]));
+			isChanged = true;
+		}
+
+		if (this.getDeleted_at() != null && !this.getDeleted_at().equals(HelperClass.toTimestamp(allFields[6]))) {
+			this.setDeleted_at(HelperClass.toTimestamp(allFields[6]));
+			isChanged = true;
+		}
+
+		if (this.getEol_at() != null && !this.getEol_at().equals(HelperClass.toTimestamp(allFields[7]))) {
+			this.setEol_at(HelperClass.toTimestamp(allFields[7]));
+			isChanged = true;
+		}
+
+		if (this.getExpired_at() != null && !this.getExpired_at().equals(HelperClass.toTimestamp(allFields[8]))) {
+			this.setExpired_at(HelperClass.toTimestamp(allFields[8]));
+			isChanged = true;
+		}
+
+		if (this.getLength() != HelperClass.toInteger(allFields[9])) {
+			this.setLength(HelperClass.toInteger(allFields[9]));
+			isChanged = true;
+		}
+
+		if (this.getRun_number() != HelperClass.toInteger(allFields[11])) {
+			this.setRun_number(HelperClass.toInteger(allFields[11]));
+			isChanged = true;
+		}
+
+		if (this.getUpdated_at() != null && !this.getUpdated_at().equals(HelperClass.toTimestamp(allFields[12]))) {
+			this.setUpdated_at(HelperClass.toTimestamp(allFields[12]));
+			isChanged = true;
+		}
+
+		return isChanged;
 	}
 
 }
