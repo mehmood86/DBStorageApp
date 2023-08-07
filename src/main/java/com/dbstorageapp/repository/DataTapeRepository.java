@@ -12,5 +12,5 @@ import com.dbstorageapp.model.DataTape;
 public interface DataTapeRepository extends CrudRepository<DataTape, Long> {
 
 	DataTape findDataTapeByName(String dataTapeName);
-	List<DataTape> findDataTapeByNameNotIn(ArrayList<String> names);
+	List<DataTape> findDataTapeByNameNotIn(ArrayList<String> names);	
 }

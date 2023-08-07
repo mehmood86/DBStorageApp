@@ -14,7 +14,7 @@ public class HelperClass {
 	public static Timestamp toTimestamp(String input) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
-			Date date = dateFormat.parse(input);
+			Date date = dateFormat.parse(input);			
 			return new java.sql.Timestamp(date.getTime());
 		} catch (ParseException e) {
 			return null;

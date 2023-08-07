@@ -1,7 +1,6 @@
 package com.dbstorageapp.service;
 
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,68 +49,83 @@ public class DataTapeService {
 		dataTapeRepository.save(dataTape);
 	}
 
-	// Reads a .txt File and persists KeyValue pairs in DB
-	// optionally, a csv is also created
+	// Reads Tape File and persists them directly in DB
 	public void saveRecordFromInputFile() {
+
+		var dataTapeNames = new ArrayList<String>();
+
 		try {
-			InputStream inputStream = getClass().getResourceAsStream("/dataset.txt");
+			InputStream inputStream = getClass().getResourceAsStream("/dataset");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			String line;
-			List<DataTape> records = new ArrayList<>();
-
-			FileWriter writer = new FileWriter("dataset.csv", false);
-
-			String[] items = { "access_cnt", "accessed_at", "bytes", "campaign", "closed_at", "created_at",
-					"deleted_at", "eol_at", "expired_at", "length", "name", "run_number", "updated_at" };
-			// Add header to csv file
-			for (String item : items) {
-				writer.write(item + ",");
-			}
-			writer.write("\n");
 
 			while ((line = reader.readLine()) != null) {
-				String[] fields = line.split(";");
-				LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
-				for (String pair : fields) {
-					String[] kv = pair.split(":");
-					if (kv.length <= 2) {
-						map.put(kv[0], kv[1].strip());
-					} else if (kv.length == 3) {
-						String ts = kv[1] + ":" + kv[2];
-						map.put(kv[0], ts.strip());
-					} else {
-						String ts = kv[1] + ":" + kv[2] + ":" + kv[3];
-						map.put(kv[0], ts.strip());
+				List<String> dTapeCSV = new ArrayList<String>();
+				String dataTapeName = "";
+
+				if (line.length() > 0 && !line.startsWith(",,,,,,,,,,,,")) {
+					String[] fields = line.split(";");
+					LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+					for (String pair : fields) {
+						String[] kv = pair.split(":");
+						if (kv.length == 2) {
+							map.put(kv[0], kv[1].strip());
+							dTapeCSV.add(kv[1].strip());
+
+						} else if (kv.length == 3) {
+							String ts = kv[1] + ":" + kv[2];
+							map.put(kv[0], ts.strip());
+							dTapeCSV.add(ts.strip());
+						} else {
+							String ts = kv[1] + ":" + kv[2] + ":" + kv[3];
+							map.put(kv[0], ts.strip());
+							dTapeCSV.add(ts.strip());
+						}
+					}
+
+					// converting current line to comma separated pattern
+					String[] dTapeFields = dTapeCSV.toArray(new String[0]);
+
+					dataTapeName = map.get("name");
+					dataTapeNames.add(map.get("name"));
+
+					try {
+						DataTape currentDTape = dataTapeRepository.findDataTapeByName(dataTapeName);
+
+						if (currentDTape != null) {
+							if (currentDTape.updateOnlyOnChanges(dTapeFields) == true) {
+								System.out.println("Updating: " + dataTapeName);
+								dataTapeRepository.save(currentDTape);
+							}
+						} else {
+							System.out.println("Creating: " + dataTapeName);
+							dataTapeRepository.save(new DataTape(HelperClass.toInteger(dTapeFields[0]),
+									HelperClass.toTimestamp(dTapeFields[1]), HelperClass.toLong(dTapeFields[2]),
+									dTapeFields[3], HelperClass.toTimestamp(dTapeFields[4]),
+									HelperClass.toTimestamp(dTapeFields[5]), HelperClass.toTimestamp(dTapeFields[6]),
+									HelperClass.toTimestamp(dTapeFields[7]), HelperClass.toTimestamp(dTapeFields[8]),
+									HelperClass.toInteger(dTapeFields[9]), dTapeFields[10],
+									HelperClass.toInteger(dTapeFields[11]), HelperClass.toTimestamp(dTapeFields[12])));
+						}
+					} catch (DataAccessException e) {
+						System.out.println(e.getMessage());
 					}
 				}
-
-				// Add records to csv file
-				for (String item : items) {
-					writer.write(map.get(item) + ",");
-				}
-				writer.write("\n");
-
-				records.add(new DataTape(HelperClass.toInteger(map.get("access_cnt")),
-						HelperClass.toTimestamp(map.get("accessed_at")), HelperClass.toLong(map.get("bytes")),
-						map.get("campaign"), HelperClass.toTimestamp(map.get("closed_at")),
-						HelperClass.toTimestamp(map.get("created_at")), HelperClass.toTimestamp(map.get("deleted_at")),
-						HelperClass.toTimestamp(map.get("eol_at")), HelperClass.toTimestamp(map.get("expired_at")),
-						HelperClass.toInteger(map.get("length")), map.get("name"),
-						HelperClass.toInteger(map.get("run_number")), HelperClass.toTimestamp(map.get("updated_at"))));
 			}
-			dataTapeRepository.saveAll(records);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		List<DataTape> deleteDataTapes = dataTapeRepository.findDataTapeByNameNotIn(dataTapeNames);
+		dataTapeRepository.deleteAll(deleteDataTapes);
+		HelperClass.getDeletedTapes(deleteDataTapes);
 	}
 
-	// Read from .csv and persist them directly in DB
 	public void saveRecordFromCSV() {
 		var dataTapeNames = new ArrayList<String>();
 		try {
-			InputStream inputStream = getClass().getResourceAsStream("/dataset.csv");
+			InputStream inputStream = getClass().getResourceAsStream("src/main/resources/dataset.csv");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			String line;
 
@@ -146,9 +160,13 @@ public class DataTapeService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// delete (csv_file) non existing records from db
+		// delete all records from DB that do not exists in given file
 		List<DataTape> deleteDataTapes = dataTapeRepository.findDataTapeByNameNotIn(dataTapeNames);
 		dataTapeRepository.deleteAll(deleteDataTapes);
 		HelperClass.getDeletedTapes(deleteDataTapes);
+	}
+	
+	public long getCountOfExistingRecords() {
+		return dataTapeRepository.count();
 	}
 }

@@ -19,8 +19,18 @@ public class DbStorageAppApplication implements CommandLineRunner {
 
 	public void run(String... args) throws Exception {
 
-		// dService.saveRecordFromInputFile();
-		dService.saveRecordFromCSV();
+		System.out.println("[INFO] Service started!");
+		System.out.println();
+
+		// 1: Automated process
+		dService.saveRecordFromInputFile();
+
+		// 2: Manual process,
+		// dService.saveRecordFromCSV();
+
+		System.out.println("Total records in DB: " + dService.getCountOfExistingRecords());
+		System.out.println();
+		System.out.println("[INFO] Service ended!");
 	}
 
 }
