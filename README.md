@@ -1,5 +1,8 @@
 # DB Storage App
 
+## Intro
+Load data from a file, convert it to csv format and then insert it into the database which must be complaint with provided dump file. This means, the program will check for every entry in the file if it exists, and need to be updated. If not, it should create new record and if any record only exists in the db but not in the provided file, it should be deleted. 
+
 ## Requirements
 - Java 17
 - MySQL Workbench
