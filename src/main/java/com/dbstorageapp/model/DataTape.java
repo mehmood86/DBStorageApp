@@ -165,7 +165,7 @@ public class DataTape {
 	}
 
 	public boolean updateOnlyOnChanges(String[] allFields) {
-		
+
 		boolean isChanged = false;
 
 		if (this.getAccess_cnt() != HelperClass.toInteger(allFields[0])) {
@@ -175,7 +175,7 @@ public class DataTape {
 
 		if (this.getAccessed_at() != null && !this.getAccessed_at().equals(HelperClass.toTimestamp(allFields[1]))) {
 			this.setAccessed_at(HelperClass.toTimestamp(allFields[1]));
-			isChanged = true;			
+			isChanged = true;
 		}
 
 		if (this.getBytes() != HelperClass.toLong(allFields[2])) {
@@ -226,9 +226,7 @@ public class DataTape {
 		if (this.getUpdated_at() != null && !this.getUpdated_at().equals(HelperClass.toTimestamp(allFields[12]))) {
 			this.setUpdated_at(HelperClass.toTimestamp(allFields[12]));
 			isChanged = true;
-		}		
+		}
 		return isChanged;
-		
 	}
-
 }

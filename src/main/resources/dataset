@@ -1,4 +1,4 @@
-access_cnt: 321;accessed_at: None;bytes: 53602861012;campaign: Archive;closed_at: 2020-11-14 20:25:18;created_at: 2019-11-14 16:02:06;deleted_at: None;eol_at: None;expired_at: None;length: 5;name: mgm218_13TeV.00362986.physics_Background.archive.RAW.p3752_tid19774962_00;run_number: 362986;updated_at: 2022-04-20 23:24:24
+access_cnt: 322;accessed_at: None;bytes: 53602861012;campaign: Archive;closed_at: 2020-11-14 20:25:18;created_at: 2019-11-14 16:02:06;deleted_at: None;eol_at: None;expired_at: None;length: 5;name: mgm218_13TeV.00362986.physics_Background.archive.RAW.p3752_tid19774962_00;run_number: 362986;updated_at: 2022-04-20 23:24:24
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
 access_cnt: 135;accessed_at: 2000-02-19 03:15:58;bytes: 338239451460;campaign: data18_13TeV:tzero;closed_at: 2018-10-06 20:04:35;created_at: 2018-10-06 16:08:13;deleted_at: None;eol_at: None;expired_at: None;length: 271;name: data18_13TeV.00362986.physics_CosmicCalo.merge.RAW;run_number: 362986;updated_at: 2023-02-19 03:16:31

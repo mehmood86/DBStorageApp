@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class DataTapeService {
 
 	@Autowired
 	DataTapeRepository dataTapeRepository;
+
+	Logger logger = LoggerFactory.getLogger(DataTapeService.class);
 
 	// Get all records
 	public List<DataTape> getAllDataTape() {
@@ -51,6 +55,8 @@ public class DataTapeService {
 
 	// Reads Tape File and persists them directly in DB
 	public void saveRecordFromInputFile() {
+
+		logger.info("Data injection service started");
 
 		var dataTapeNames = new ArrayList<String>();
 
@@ -96,11 +102,11 @@ public class DataTapeService {
 
 						if (currentDTape != null) {
 							if (currentDTape.updateOnlyOnChanges(dTapeFields) == true) {
-								System.out.println("Updating: " + dataTapeName);
+								logger.info("Updating: " + dataTapeName);
 								dataTapeRepository.save(currentDTape);
 							}
 						} else {
-							System.out.println("Creating: " + dataTapeName);
+							logger.info("Creating: " + dataTapeName);
 							dataTapeRepository.save(new DataTape(HelperClass.toInteger(dTapeFields[0]),
 									HelperClass.toTimestamp(dTapeFields[1]), HelperClass.toLong(dTapeFields[2]),
 									dTapeFields[3], HelperClass.toTimestamp(dTapeFields[4]),
@@ -120,10 +126,17 @@ public class DataTapeService {
 		List<DataTape> deleteDataTapes = dataTapeRepository.findDataTapeByNameNotIn(dataTapeNames);
 		dataTapeRepository.deleteAll(deleteDataTapes);
 		HelperClass.getDeletedTapes(deleteDataTapes);
+
+		logger.info("Data injecting service ended");
+		logger.info("[Summary]::Total records in DB: " + getCountOfExistingRecords());
 	}
 
 	public void saveRecordFromCSV() {
+
+		logger.info("Data injection service started");
+
 		var dataTapeNames = new ArrayList<String>();
+
 		try {
 			InputStream inputStream = getClass().getResourceAsStream("src/main/resources/dataset.csv");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -139,12 +152,11 @@ public class DataTapeService {
 
 					if (currentDTape != null) {
 						if (currentDTape.updateOnlyOnChanges(fields) == true) {
-							System.out.println("Updating: " + dataTapeName);
+							logger.info("Updating: " + dataTapeName);
 							dataTapeRepository.save(currentDTape);
 						}
-
 					} else {
-						System.out.println("Creating: " + dataTapeName);
+						logger.info("Creating: " + dataTapeName);
 						dataTapeRepository.save(new DataTape(HelperClass.toInteger(fields[0]),
 								HelperClass.toTimestamp(fields[1]), HelperClass.toLong(fields[2]), fields[3],
 								HelperClass.toTimestamp(fields[4]), HelperClass.toTimestamp(fields[5]),
@@ -164,8 +176,10 @@ public class DataTapeService {
 		List<DataTape> deleteDataTapes = dataTapeRepository.findDataTapeByNameNotIn(dataTapeNames);
 		dataTapeRepository.deleteAll(deleteDataTapes);
 		HelperClass.getDeletedTapes(deleteDataTapes);
+		logger.info("Data injecting service ended");
+		logger.info("[Summary]::Total records in DB: " + getCountOfExistingRecords());
 	}
-	
+
 	public long getCountOfExistingRecords() {
 		return dataTapeRepository.count();
 	}
